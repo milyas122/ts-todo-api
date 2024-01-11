@@ -17,8 +17,20 @@ async function createTask(req: Request, res: Response): Promise<Response> {
 
     return res.status(201).json({ ...result });
   } catch (error) {
+    return errorHandler(res, error, { logKey: "createTask" });
+  }
+}
+
+async function taskDetail(req: Request, res: Response): Promise<Response> {
+  try {
+    const { id } = req.params;
+
+    const result = await taskService.getTaskDetail(id);
+
+    return res.status(201).json({ ...result });
+  } catch (error) {
     return errorHandler(res, error, { logKey: "sendInvite" });
   }
 }
 
-export { createTask };
+export { createTask, taskDetail };

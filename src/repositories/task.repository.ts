@@ -16,6 +16,10 @@ class TaskRepository {
     this.repository = dataSource.getRepository(Task);
   }
 
+  async findTask(id: string): Promise<Task | undefined> {
+    return await this.repository.findOne({ where: { id } });
+  }
+
   async createTask({ title, status, user }: CreateTaskArgs): Promise<Task> {
     const task = new Task();
     task.title = title;

@@ -25,6 +25,12 @@ class AuthService {
     const task = await this.taskRepository.createTask({ title, status, user });
     return task;
   }
+
+  async getTaskDetail(id: string): Promise<Task | undefined> {
+    const task = await this.taskRepository.findTask(id);
+    if (!task) throw new BadRequest({ message: "task not found" });
+    return task;
+  }
 }
 
 export default AuthService;
