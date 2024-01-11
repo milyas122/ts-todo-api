@@ -4,7 +4,8 @@ import { authMiddleware, isAdmin } from "@/api/middlewares";
 
 const router = express.Router();
 
-router.get("/invite", authMiddleware, isAdmin, userApi.sendInvite);
+router.post("/invite", authMiddleware, isAdmin, userApi.sendInvite);
+router.post("/resend-invite", authMiddleware, isAdmin, userApi.resendInvite);
 router.post("/login", userApi.login);
 
 export = router;

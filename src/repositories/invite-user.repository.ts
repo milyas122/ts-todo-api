@@ -1,6 +1,7 @@
 import { InviteUser } from "@/db/entities";
 import dataSource from "@/db";
 import { Repository } from "typeorm";
+import { BadRequest } from "@/utils/errors/custom-errors";
 
 type CreateInviteUserArgs = {
   email: string;
@@ -33,6 +34,17 @@ class InviteUserRepository {
     userInvite.token = token;
     userInvite.timeout = timeout;
     await this.repository.save(userInvite);
+  }
+
+  async updateInvite(email: string, timeout: string): Promise<InviteUser> {
+    const inviteToUpdate = await this.repository.findOne({ where: { email } });
+
+    if (!inviteToUpdate) {
+      throw new BadRequest({ message: "invite not exist" });
+    }
+    inviteToUpdate.timeout = timeout;
+    const result = await this.repository.save(inviteToUpdate);
+    return result;
   }
 }
 

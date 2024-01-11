@@ -85,6 +85,26 @@ class AuthService {
       invitationLink: `http://localhost:5000/api/signup/${inviteToken}`,
     };
   }
+
+  async ResendInvitation(email: string): Promise<InviteUserResponse> {
+    const isInvited = await this.inviteUserRepository.findUser(email);
+
+    if (!isInvited) {
+      throw new BadRequest({ message: "user not invited yet" });
+    }
+
+    const expiration = Date.now() + 1 * 60 * 1000; // 1 minute timeout
+    const { token } = await this.inviteUserRepository.updateInvite(
+      email,
+      `${expiration}`
+    );
+    console.log(`http://localhost:5000/api/signup/${token}`);
+
+    return {
+      message: "user invited successfully",
+      invitationLink: `http://localhost:5000/api/signup/${token}`,
+    };
+  }
 }
 
 export default AuthService;

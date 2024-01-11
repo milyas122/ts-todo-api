@@ -16,7 +16,20 @@ async function sendInvite(req: Request, res: Response): Promise<Response> {
     const result = await authService.InviteUser(req.body.email);
     return res.status(201).json({ ...result });
   } catch (error) {
-    return errorHandler(res, error, { logKey: "UserSignup" });
+    return errorHandler(res, error, { logKey: "sendInvite" });
+  }
+}
+
+async function resendInvite(req: Request, res: Response): Promise<Response> {
+  try {
+    if (!req.body.email) {
+      throw new BadRequest({ message: "email is required" });
+    }
+
+    const result = await authService.ResendInvitation(req.body.email);
+    return res.status(201).json({ ...result });
+  } catch (error) {
+    return errorHandler(res, error, { logKey: "resendInvite" });
   }
 }
 
@@ -31,4 +44,4 @@ async function login(req: Request, res: Response): Promise<Response> {
   }
 }
 
-export default { sendInvite, login };
+export default { sendInvite, resendInvite, login };
