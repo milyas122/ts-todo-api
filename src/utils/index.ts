@@ -39,7 +39,7 @@ export const comparePassword = async ({
 
 export const generateToken = async (user: User): Promise<string> => {
   try {
-    const payload = { id: user.id, email: user.email };
+    const payload = { id: user.id, email: user.email, isAdmin: user.isAdmin };
     const token = jwt.sign(payload, appEnvVars.jwtSecret, { expiresIn: "23h" });
 
     return token;
