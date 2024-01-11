@@ -27,7 +27,7 @@ async function resendInvite(req: Request, res: Response): Promise<Response> {
     }
 
     const result = await authService.ResendInvitation(req.body.email);
-    return res.status(201).json({ ...result });
+    return res.status(200).json({ ...result });
   } catch (error) {
     return errorHandler(res, error, { logKey: "resendInvite" });
   }

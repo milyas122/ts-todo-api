@@ -30,7 +30,7 @@ async function taskDetail(req: Request, res: Response): Promise<Response> {
       req.user.id
     );
 
-    return res.status(201).json({ ...result });
+    return res.status(200).json({ ...result });
   } catch (error) {
     return errorHandler(res, error, { logKey: "taskDetail" });
   }
@@ -42,7 +42,7 @@ async function removeTask(req: Request, res: Response): Promise<Response> {
 
     await taskService.removeTask(id, req.user.id);
 
-    return res.status(201).json({ message: "task deleted" });
+    return res.status(200).json({ message: "task deleted" });
   } catch (error) {
     return errorHandler(res, error, { logKey: "removeTask" });
   }
@@ -56,7 +56,7 @@ async function updateTask(req: Request, res: Response): Promise<Response> {
 
     await taskService.updateTask({ id, userId: req.user.id, ...cleanedFields });
 
-    return res.status(201).json({ message: "task updated successfully" });
+    return res.status(200).json({ message: "task updated successfully" });
   } catch (error) {
     return errorHandler(res, error, { logKey: "updateTask" });
   }
@@ -76,7 +76,7 @@ async function taskList(req: Request, res: Response): Promise<Response> {
       status: "" + status,
     });
 
-    return res.status(201).json({ ...tasks });
+    return res.status(200).json({ ...tasks });
   } catch (error) {
     return errorHandler(res, error, { logKey: "task list" });
   }
