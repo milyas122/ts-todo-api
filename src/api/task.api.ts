@@ -32,8 +32,20 @@ async function taskDetail(req: Request, res: Response): Promise<Response> {
 
     return res.status(201).json({ ...result });
   } catch (error) {
-    return errorHandler(res, error, { logKey: "sendInvite" });
+    return errorHandler(res, error, { logKey: "taskDetail" });
   }
 }
 
-export { createTask, taskDetail };
+async function removeTask(req: Request, res: Response): Promise<Response> {
+  try {
+    const { id } = req.params;
+
+    await taskService.removeTask(id, req.user.id);
+
+    return res.status(201).json({ message: "task deleted" });
+  } catch (error) {
+    return errorHandler(res, error, { logKey: "removeTask" });
+  }
+}
+
+export { createTask, taskDetail, removeTask };

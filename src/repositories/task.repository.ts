@@ -31,6 +31,10 @@ class TaskRepository {
 
     return await this.repository.save(task);
   }
+
+  async deleteTask(id: string): Promise<void> {
+    await this.repository.delete({ id });
+  }
 }
 
 export default TaskRepository;

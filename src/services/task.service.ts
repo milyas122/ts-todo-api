@@ -36,6 +36,18 @@ class AuthService {
     }
     return task;
   }
+
+  async removeTask(id: string, userId: string): Promise<void> {
+    const task = await this.taskRepository.findTask(id);
+
+    if (!task) throw new BadRequest({ message: "task not found" });
+
+    if (task.user.id !== userId) {
+      throw new BadRequest({ message: "task not found" });
+    }
+
+    await this.taskRepository.deleteTask(id);
+  }
 }
 
 export default AuthService;
