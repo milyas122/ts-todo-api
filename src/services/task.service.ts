@@ -26,9 +26,14 @@ class AuthService {
     return task;
   }
 
-  async getTaskDetail(id: string): Promise<Task | undefined> {
+  async getTaskDetail(id: string, userId: string): Promise<Task | undefined> {
     const task = await this.taskRepository.findTask(id);
+
     if (!task) throw new BadRequest({ message: "task not found" });
+
+    if (task.user.id !== userId) {
+      throw new BadRequest({ message: "task not found" });
+    }
     return task;
   }
 }

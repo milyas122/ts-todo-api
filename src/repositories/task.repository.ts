@@ -17,7 +17,10 @@ class TaskRepository {
   }
 
   async findTask(id: string): Promise<Task | undefined> {
-    return await this.repository.findOne({ where: { id } });
+    return await this.repository.findOne({
+      where: { id },
+      relations: ["user"],
+    });
   }
 
   async createTask({ title, status, user }: CreateTaskArgs): Promise<Task> {

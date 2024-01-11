@@ -25,7 +25,10 @@ async function taskDetail(req: Request, res: Response): Promise<Response> {
   try {
     const { id } = req.params;
 
-    const result = await taskService.getTaskDetail(id);
+    const { user, ...result } = await taskService.getTaskDetail(
+      id,
+      req.user.id
+    );
 
     return res.status(201).json({ ...result });
   } catch (error) {
