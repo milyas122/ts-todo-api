@@ -8,6 +8,12 @@ interface CreateTaskArgs {
   userId: string;
 }
 
+interface UpdateTaskArgs {
+  id: string;
+  userId: string;
+  title?: string;
+  status?: TaskStatus;
+}
 class AuthService {
   private taskRepository: TaskRepository;
   private userRepository: UserRepository;
@@ -47,6 +53,28 @@ class AuthService {
     }
 
     await this.taskRepository.deleteTask(id);
+  }
+
+  async updateTask({
+    id,
+    userId,
+    title,
+    status,
+  }: UpdateTaskArgs): Promise<void> {
+    const task = await this.taskRepository.findTask(id);
+
+    if (!task) throw new BadRequest({ message: "task not found" });
+
+    if (task.user.id !== userId) {
+      throw new BadRequest({ message: "task not found" });
+    }
+    const updatedTitle = title || task.title;
+    const updatedStatus = status || task.status;
+    await this.taskRepository.update({
+      id,
+      title: updatedTitle,
+      status: updatedStatus,
+    });
   }
 }
 

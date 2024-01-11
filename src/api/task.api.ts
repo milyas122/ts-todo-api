@@ -48,4 +48,18 @@ async function removeTask(req: Request, res: Response): Promise<Response> {
   }
 }
 
-export { createTask, taskDetail, removeTask };
+async function updateTask(req: Request, res: Response): Promise<Response> {
+  try {
+    const { id } = req.params;
+
+    const cleanedFields = await validate(taskSchema, req.body);
+
+    await taskService.updateTask({ id, userId: req.user.id, ...cleanedFields });
+
+    return res.status(201).json({ message: "task updated successfully" });
+  } catch (error) {
+    return errorHandler(res, error, { logKey: "update" });
+  }
+}
+
+export { createTask, taskDetail, removeTask, updateTask };
