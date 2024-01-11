@@ -7,5 +7,5 @@ const router = express.Router();
 router.post("/invite", authMiddleware, isAdmin, userApi.sendInvite);
 router.post("/resend-invite", authMiddleware, isAdmin, userApi.resendInvite);
 router.post("/login", userApi.login);
-
+router.post("/signup", userApi.signup);
 export = router;

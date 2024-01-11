@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { errorHandler } from "@/utils/errors";
 import { validate } from "@/validations";
-import { loginSchema } from "@/validations/auth.schema";
+import { loginSchema, signupSchema } from "@/validations/auth.schema";
 import { AuthService } from "@/services";
 import { BadRequest } from "@/utils/errors/custom-errors";
 
@@ -44,4 +44,20 @@ async function login(req: Request, res: Response): Promise<Response> {
   }
 }
 
-export default { sendInvite, resendInvite, login };
+async function signup(req: Request, res: Response): Promise<Response> {
+  try {
+    const { invite } = req.query;
+    if (!invite) {
+      throw new BadRequest({
+        message: "invite token is required query params",
+      });
+    }
+    const cleanedFields = await validate(signupSchema, req.body);
+    await authService.Signup({ ...cleanedFields, inviteToken: invite });
+    return res.status(201).json({ message: "user created successfully" });
+  } catch (error) {
+    return errorHandler(res, error, { logKey: "UserSignup" });
+  }
+}
+
+export default { sendInvite, resendInvite, login, signup };

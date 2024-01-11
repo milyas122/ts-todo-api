@@ -1,13 +1,24 @@
 import { UserRepository, InviteUserRepository } from "@/repositories";
 import { BadRequest } from "@/utils/errors/custom-errors";
-import { comparePassword, generateToken } from "@/utils";
+import { comparePassword, createHashPassword, generateToken } from "@/utils";
 
 interface SignInArgs {
   email: string;
   password: string;
 }
 
+interface SignUpArgs {
+  email: string;
+  password: string;
+  inviteToken: string;
+}
+
 interface SignInResponse {
+  id: string;
+  email: string;
+}
+
+interface SignUpResponse {
   id: string;
   email: string;
 }
@@ -52,6 +63,45 @@ class AuthService {
       }
     }
 
+    const token = await generateToken(user);
+
+    return { user: { id: user.id, email: user.email }, token };
+  }
+
+  async Signup({
+    email,
+    password,
+    inviteToken,
+  }: SignUpArgs): Promise<{ user: SignUpResponse; token: string }> {
+    const isUser = await this.userRepository.findUser({ email });
+
+    if (isUser) {
+      throw new BadRequest({
+        message: "this email is already registered",
+        statusCode: 400,
+      });
+    }
+
+    const invitedUser = await this.inviteUserRepository.findUser(email);
+
+    if (invitedUser?.token !== inviteToken) {
+      throw new BadRequest({
+        message: "this invitation token is invalid",
+      });
+    }
+
+    if (invitedUser.timeout <= Date.now().toString()) {
+      throw new BadRequest({
+        message: "this invitation token is expired",
+      });
+    }
+
+    const hash = await createHashPassword(password);
+
+    const user = await this.userRepository.createUser({
+      email,
+      password: hash,
+    });
     const token = await generateToken(user);
 
     return { user: { id: user.id, email: user.email }, token };

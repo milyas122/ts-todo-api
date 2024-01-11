@@ -5,4 +5,6 @@ const loginSchema = object().shape({
   password: string().required().label("Password"),
 });
 
-export { loginSchema };
+const signupSchema = loginSchema;
+
+export { loginSchema, signupSchema };

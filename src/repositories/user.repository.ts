@@ -29,11 +29,11 @@ class UserRepository {
     return user;
   }
 
-  async createUser({ email, password }: UserArgs): Promise<void> {
+  async createUser({ email, password }: UserArgs): Promise<User> {
     const user = new User();
     user.email = email;
     user.password = password;
-    await this.repository.save(user);
+    return await this.repository.save(user);
   }
 }
 
