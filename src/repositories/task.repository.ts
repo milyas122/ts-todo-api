@@ -1,8 +1,7 @@
 import { Task, User } from "@/db/entities";
 import { TaskStatus } from "@/db/entities/task.entity";
 import dataSource from "@/db";
-import { Repository } from "typeorm";
-import { BadRequest } from "@/utils/errors/custom-errors";
+import { Like, Repository } from "typeorm";
 
 interface CreateTaskArgs {
   title: string;
@@ -14,6 +13,20 @@ interface UpdateTaskArgs {
   id: string;
   title: string;
   status: TaskStatus;
+}
+
+interface FindAllTaskArgs {
+  offset: number;
+  limit: number;
+  user?: string;
+  status: string;
+  userId?: string;
+}
+
+interface FindAllTaskResponse {
+  tasks: Task[];
+  total: number;
+  totalPages: number;
 }
 
 class TaskRepository {
@@ -37,6 +50,62 @@ class TaskRepository {
     task.user = user;
 
     return await this.repository.save(task);
+  }
+
+  async findAll({
+    offset,
+    limit,
+    user,
+    status,
+  }: FindAllTaskArgs): Promise<FindAllTaskResponse> {
+    let where = {};
+
+    if (user) where["user"] = { id: user };
+
+    if (status) where["status"] = status.toLowerCase();
+
+    const [tasks, total] = await this.repository.findAndCount({
+      where,
+      loadRelationIds: true,
+      skip: offset,
+      take: limit,
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      tasks,
+      total,
+      totalPages,
+    };
+  }
+
+  async findAllByUser({
+    offset,
+    limit,
+    status,
+    userId,
+  }: FindAllTaskArgs): Promise<FindAllTaskResponse> {
+    let where = {};
+
+    if (status) where["status"] = status.toLowerCase();
+
+    if (userId) where["user"] = { id: userId };
+
+    const [tasks, total] = await this.repository.findAndCount({
+      where,
+      loadRelationIds: true,
+      skip: offset,
+      take: limit,
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      tasks,
+      total,
+      totalPages,
+    };
   }
 
   async update({ id, title, status }: UpdateTaskArgs): Promise<void> {

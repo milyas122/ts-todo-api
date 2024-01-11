@@ -14,6 +14,22 @@ interface UpdateTaskArgs {
   title?: string;
   status?: TaskStatus;
 }
+
+interface TaskListArgs {
+  userId: string;
+  isAdmin: boolean;
+  offset: number;
+  limit: number;
+  user: string;
+  status: string;
+}
+
+interface FindAllTaskResponse {
+  tasks: Task[];
+  total: number;
+  totalPages: number;
+}
+
 class AuthService {
   private taskRepository: TaskRepository;
   private userRepository: UserRepository;
@@ -75,6 +91,35 @@ class AuthService {
       title: updatedTitle,
       status: updatedStatus,
     });
+  }
+
+  async getAllTasks({
+    userId,
+    isAdmin,
+    offset,
+    limit,
+    user,
+    status,
+  }: TaskListArgs): Promise<FindAllTaskResponse> {
+    let tasks: FindAllTaskResponse;
+
+    if (Boolean(isAdmin)) {
+      tasks = await this.taskRepository.findAll({
+        offset,
+        limit,
+        user,
+        status,
+      });
+    } else {
+      tasks = await this.taskRepository.findAllByUser({
+        offset,
+        limit,
+        status,
+        userId,
+      });
+    }
+
+    return tasks;
   }
 }
 

@@ -58,8 +58,28 @@ async function updateTask(req: Request, res: Response): Promise<Response> {
 
     return res.status(201).json({ message: "task updated successfully" });
   } catch (error) {
-    return errorHandler(res, error, { logKey: "update" });
+    return errorHandler(res, error, { logKey: "updateTask" });
   }
 }
 
-export { createTask, taskDetail, removeTask, updateTask };
+async function taskList(req: Request, res: Response): Promise<Response> {
+  try {
+    const { offset = 0, limit = 6, user = "", status = "" } = req.query;
+    const { id, isAdmin } = req.user;
+
+    const tasks = await taskService.getAllTasks({
+      userId: id,
+      isAdmin: Boolean(isAdmin),
+      offset: Number(offset),
+      limit: Number(limit),
+      user: "" + user,
+      status: "" + status,
+    });
+
+    return res.status(201).json({ ...tasks });
+  } catch (error) {
+    return errorHandler(res, error, { logKey: "task list" });
+  }
+}
+
+export { createTask, taskDetail, removeTask, updateTask, taskList };
