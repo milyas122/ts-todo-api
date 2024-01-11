@@ -1,6 +1,11 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import User from "./user.entity";
 
+export enum TaskStatus {
+  Pending = "pending",
+  Completed = "completed",
+}
+
 @Entity({ name: "task" })
 export default class Task {
   @PrimaryGeneratedColumn("uuid")
@@ -9,11 +14,8 @@ export default class Task {
   @Column()
   title: string;
 
-  @Column({ type: "longtext", nullable: true })
-  content: string;
-
-  @Column({ default: false })
-  isAdmin: boolean;
+  @Column({ enumName: "TaskStatus", default: "pending" })
+  status: TaskStatus;
 
   @ManyToOne(() => User, (user) => user.tasks)
   user: User;

@@ -53,8 +53,11 @@ async function signup(req: Request, res: Response): Promise<Response> {
       });
     }
     const cleanedFields = await validate(signupSchema, req.body);
-    await authService.Signup({ ...cleanedFields, inviteToken: invite });
-    return res.status(201).json({ message: "user created successfully" });
+    const result = await authService.Signup({
+      ...cleanedFields,
+      inviteToken: invite,
+    });
+    return res.status(201).json({ ...result });
   } catch (error) {
     return errorHandler(res, error, { logKey: "UserSignup" });
   }
