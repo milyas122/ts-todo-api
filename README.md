@@ -39,3 +39,4 @@ To initialize the database with an initial admin user, I have followed a well-st
    ```
    npm run dev
    ```
+   Note: Please find the postman collection for api testing.
